@@ -54,8 +54,23 @@ def cmd_check(_args):
     }, ensure_ascii=False, indent=2))
 
 
+def safe_target(path):
+    """Write only to a .json file that is new or is already this skill's own config.
+
+    The path can come from an environment variable, so never overwrite an unrelated file.
+    """
+    path = os.path.abspath(os.path.expanduser(path))
+    if not path.endswith(".json") or os.path.islink(path):
+        sys.exit("refusing to write config: {} (must be a regular .json file)".format(path))
+    if os.path.exists(path):
+        cfg = read_config(path)
+        if not (isinstance(cfg, dict) and cfg.get("schema") == 1 and "root" in cfg):
+            sys.exit("refusing to overwrite {}: it is not a home-products config".format(path))
+    return path
+
+
 def cmd_save(args):
-    path = config_path()
+    path = safe_target(config_path())
     os.makedirs(os.path.dirname(path), exist_ok=True)
     cfg = read_config(path) or {}
     cfg.update({"root": args.root, "gmail": args.gmail, "lang": args.lang,
