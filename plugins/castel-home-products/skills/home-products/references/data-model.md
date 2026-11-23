@@ -71,6 +71,7 @@ python3 $S calc     --start 2025-12-01 --months 12        # תאריך תפוג�
 | `manual_source` | `manufacturer_pdf` · `photos` · `none` |
 | `drive_folder_url`, `invoice_url`, `warranty_doc_url`, `manual_url`, `doc_url` | קישורים. בלי מייל ובלי `authuser` |
 | `wiki` | `products-<slug>.md` |
+| `vector_sources` | רק במצב מורחב: ה-`source_id`-ים של המוצר במאגר הווקטורי (למשל `samsung-tv-manual`) |
 | `status` | `active` · `retired` (מוצר שיצא משימוש. לא מוחקים) |
 
 תאימות: אם ברשימה קיימת יש שדות נוספים שלא מופיעים כאן, משאירים אותם כמו שהם.

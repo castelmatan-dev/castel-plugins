@@ -7,8 +7,9 @@ not visible to a script: the agent checks them from its own tool list.
 
 Commands (JSON on stdout):
   check                         is setup done? python version, config path, saved choices
-  save --root NAME [--gmail yes|no] [--lang he|en]
+  save --root NAME [--gmail yes|no] [--lang he|en] [--vector on|off]
                                 record the choices after the user approved them
+                                (--vector: extended mode with the products vector store; off by default)
 
 The config lives outside the plugin folder, so plugin updates never erase it:
   $HOME_PRODUCTS_CONFIG, else ~/.config/home-products/setup.json
@@ -75,6 +76,9 @@ def cmd_save(args):
     cfg = read_config(path) or {}
     cfg.update({"root": args.root, "gmail": args.gmail, "lang": args.lang,
                 "setup_date": dt.date.today().isoformat(), "schema": 1})
+    if args.vector is not None:
+        cfg["vector"] = args.vector
+    cfg.setdefault("vector", "off")
     tmp = path + ".tmp"
     with open(tmp, "w", encoding="utf-8") as f:
         json.dump(cfg, f, ensure_ascii=False, indent=2)
@@ -90,6 +94,7 @@ def main():
     sp.add_argument("--root", required=True)
     sp.add_argument("--gmail", choices=("yes", "no"), default="yes")
     sp.add_argument("--lang", choices=("he", "en"), default="he")
+    sp.add_argument("--vector", choices=("on", "off"))
     args = p.parse_args()
     {"check": cmd_check, "save": cmd_save}[args.cmd](args)
 
