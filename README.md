@@ -17,7 +17,13 @@
 **שלב ב' (אצלך):** לפתוח Claude Code, להדביק את הבקשה הבאה, ולאשר כל צעד כשהוא שואל:
 
 ```text
-תתקין לי את הפלאגין castel-home-products מהריפו הפרטי castelmatan-dev/castel-plugins ב-GitHub. לפני כל פקודה שמשנה משהו במחשב שלי, תסביר מה היא עושה ותחכה לאישור.
+אני רוצה להתקין את הפלאגין castel-home-products מהריפו הפרטי castelmatan-dev/castel-plugins ב-GitHub.
+לפני ההתקנה, תסביר לי בקצרה, בשלוש עד חמש שורות, מה הוא עושה. לפי מה שקיבלתי:
+- מצלמים חשבונית, תעודת אחריות או דף הוראות, והמוצר מתויק ב-Google Drive שלי.
+- תאריך תפוגת האחריות מחושב בסקריפט, וחוברת היצרן נמצאת לבד.
+- כשמשהו מתקלקל, התשובה מגיעה מהחוברת ומהרשת, עם מקור לכל צעד ועם מצב האחריות.
+- לא נשמר שום מפתח, ושום דבר לא נשלח לאף אחד.
+אחרי ההסבר, תעבור לשלבי ההתקנה. לפני כל פקודה שמשנה משהו במחשב שלי, תסביר מה היא עושה ותחכה לאישור.
 1. תבדוק שיש לי גישה לריפו. אם אין לי gh מחובר, תדריך אותי ב-gh auth login ואז ב-gh auth setup-git. אם אין לי מפתח SSH ל-GitHub, תוסיף ל-~/.claude/settings.json את המשתנה CLAUDE_CODE_PLUGIN_PREFER_HTTPS=1 תחת "env", כדי שגם העדכונים ברקע יעבדו.
 2. תריץ: claude plugin marketplace add castelmatan-dev/castel-plugins
 3. תריץ: claude plugin install castel-home-products@castel-plugins

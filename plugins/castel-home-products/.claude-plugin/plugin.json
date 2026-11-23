@@ -1,7 +1,7 @@
 {
   "name": "castel-home-products",
   "displayName": "מוצרי הבית",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "description": "Home products: intake from photos (invoice, warranty, manual) into Google Drive, warranty dates by script, troubleshooting from the manual and the web with sources. Hebrew. No API keys: uses the Claude Google Drive and Gmail connectors.",
   "author": { "name": "Matan Castel" },
   "license": "UNLICENSED",
