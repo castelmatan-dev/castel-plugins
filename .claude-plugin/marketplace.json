@@ -1,0 +1,12 @@
+{
+  "name": "castel-plugins",
+  "description": "Matan Castel's private Claude Code plugins",
+  "owner": { "name": "Matan Castel" },
+  "plugins": [
+    {
+      "name": "castel-home-products",
+      "source": "./plugins/castel-home-products",
+      "description": "Home products: intake from photos into Google Drive, warranty tracking, manuals, troubleshooting (Hebrew)"
+    }
+  ]
+}
