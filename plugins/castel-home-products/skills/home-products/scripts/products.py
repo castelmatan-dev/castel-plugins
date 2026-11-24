@@ -102,7 +102,9 @@ def url_problems(key, value):
     return []
 
 
-def problems(rec):
+def problems(rec, strict=True):
+    """Field errors. strict=False (validate of a stored list) tolerates legacy free-text
+    warranty_source written by older versions; new records (add) are always strict."""
     errs = []
     for k in REQUIRED:
         if not rec.get(k):
@@ -135,7 +137,7 @@ def problems(rec):
                 if p.get("until") and not is_date(p["until"]):
                     errs.append(where + ": until must be YYYY-MM-DD")
     src = rec.get("warranty_source")
-    if src is not None and src not in WARRANTY_SOURCES:
+    if src is not None and src not in WARRANTY_SOURCES and strict:
         errs.append("warranty_source must be one of: " + ", ".join(WARRANTY_SOURCES))
     if src == "official_web" and not rec.get("warranty_source_url"):
         errs.append("warranty_source official_web needs warranty_source_url")
@@ -245,15 +247,19 @@ def cmd_init(args):
 
 def cmd_validate(args):
     data = load(args.file)
-    report, ids = [], set()
+    report, warnings, ids = [], [], set()
     for i, rec in enumerate(data["products"]):
-        errs = problems(rec)
+        errs = problems(rec, strict=False)
+        src = rec.get("warranty_source")
+        if src is not None and src not in WARRANTY_SOURCES:
+            warnings.append({"index": i, "id": rec.get("id"),
+                             "warning": "legacy free-text warranty_source (older version); left as is"})
         if rec.get("id") in ids:
             errs.append("duplicate id")
         ids.add(rec.get("id"))
         if errs:
             report.append({"index": i, "id": rec.get("id"), "errors": errs})
-    out({"ok": not report, "count": len(data["products"]), "problems": report})
+    out({"ok": not report, "count": len(data["products"]), "problems": report, "warnings": warnings})
     if report:
         sys.exit(1)
 
