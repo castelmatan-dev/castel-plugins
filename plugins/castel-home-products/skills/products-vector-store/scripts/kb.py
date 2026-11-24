@@ -56,11 +56,7 @@ def fail(msg, code=1):
     sys.exit(code)
 
 
-def load_settings():
-    """Read KB_N8N_URL and KB_N8N_KEY. Values never leave this process except in the request itself."""
-    path = env_path()
-    if not os.path.isfile(path):
-        fail("not configured: secrets file missing ({}). See references/workflows.md, 'הגדרה'.".format(path), 2)
+def read_values(path):
     values = {}
     with open(path, encoding="utf-8") as f:
         for line in f:
@@ -70,6 +66,46 @@ def load_settings():
                 if len(v) >= 2 and v[0] == v[-1] and v[0] in "\"'":
                     v = v[1:-1]
                 values[m.group(1)] = v
+    return values
+
+
+def sync_example_names(path, names):
+    """Lesson-13 pattern: keep .env.example next to the secrets file listing the NAMES only."""
+    example = os.path.join(os.path.dirname(path), ".env.example")
+    header = []
+    if os.path.isfile(example):
+        with open(example, encoding="utf-8") as f:
+            for line in f:
+                if line.strip() and not line.startswith("#"):
+                    break
+                if line.startswith("#"):
+                    header.append(line.rstrip("\n"))
+    new = "\n".join(header + ["{}=".format(n) for n in names]) + "\n"
+    old = open(example, encoding="utf-8").read() if os.path.isfile(example) else ""
+    if new != old:
+        with open(example, "w", encoding="utf-8") as f:
+            f.write(new)
+        return True
+    return False
+
+
+def describe(values):
+    """Say whether each setting is filled and well-formed, without revealing any value."""
+    url, key = values.get("KB_N8N_URL", ""), values.get("KB_N8N_KEY", "")
+    return {
+        "KB_N8N_URL": "missing" if not url else ("ok" if url.startswith("https://") else "set, but must start with https://"),
+        "KB_N8N_KEY": "missing" if not key else (
+            "ok (64 hex chars)" if re.fullmatch(r"[0-9a-f]{64}", key)
+            else "set, {} chars, not 64 hex: check for spaces or a partial paste".format(len(key))),
+    }
+
+
+def load_settings():
+    """Read KB_N8N_URL and KB_N8N_KEY. Values never leave this process except in the request itself."""
+    path = env_path()
+    if not os.path.isfile(path):
+        fail("not configured: secrets file missing ({}). See references/workflows.md, 'הגדרה'.".format(path), 2)
+    values = read_values(path)
     missing = [k for k in ("KB_N8N_URL", "KB_N8N_KEY") if not values.get(k)]
     if missing:
         fail("not configured: {} empty or missing in {}".format(", ".join(missing), path), 2)
@@ -128,9 +164,18 @@ def slug(value, field):
 
 
 def cmd_check(_a):
+    path = env_path()
+    if not os.path.isfile(path):
+        fail("not configured: secrets file missing ({}). See references/workflows.md, 'הגדרה'.".format(path), 2)
+    values = read_values(path)
+    status = describe(values)
+    synced = sync_example_names(path, list(values.keys()))
+    if any(v != "ok" and not v.startswith("ok ") for v in status.values()):
+        out({"configured": False, "secrets_file": path, "settings": status, "example_names_synced": synced})
+        sys.exit(2)
     base, _key, warn = load_settings()
-    res = {"configured": True, "secrets_file": env_path(), "url_host": urllib.parse.urlparse(base).netloc,
-           "file_permissions_too_open": warn}
+    res = {"configured": True, "secrets_file": path, "settings": status, "example_names_synced": synced,
+           "url_host": urllib.parse.urlparse(base).netloc, "file_permissions_too_open": warn}
     code, body = call("GET", "/kb-products/list", query={"product_id": "__healthcheck__"})
     res["n8n_reachable"] = code < 500 and code not in (401, 403)
     res["auth_ok"] = code not in (401, 403)
