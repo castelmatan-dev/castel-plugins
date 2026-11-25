@@ -29,13 +29,9 @@ python3 $K search --product-id samsung-tv --query "אין תמונה, יש קו�
 
 לכל הבקשות יש header בשם `X-KB-Key`. אם הוא חסר חוזר 401, ואם הערך שגוי חוזר 403 (ההתנהגות של Header Auth ב-n8n). הכתובות יחסיות ל-`KB_N8N_URL`.
 
-**המימוש (n8n, 24.11):**
-- **פירסור:** `W0QUjULJvbgMQfNn`. תת-תהליך בלבד, בלי webhook.
-- **קליטה:** `GujX8Peb6YaO8bfU`.
-- **חיפוש ורשימה:** `LDgCHkXpoCxkA9qc`.
-- **שמירה על ערות:** `B7d18gPiJswgnmRi`.
+**המימוש:** ארבעה וורקפלואים במופע n8n של המשתמש: פירסור (תת-תהליך בלבד, בלי webhook), קליטה, חיפוש ורשימה, ושמירה על ערות.
 
-כתובת הבסיס: `https://tamburai.app.n8n.cloud/webhook`.
+כתובת הבסיס היא `KB_N8N_URL` מקובץ הסודות, למשל `https://<instance>.app.n8n.cloud/webhook`. היא לא נכתבת בריפו.
 
 | פעולה | בקשה | תשובה |
 |---|---|---|

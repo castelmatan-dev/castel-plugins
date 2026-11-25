@@ -1,6 +1,6 @@
 {
   "name": "castel-plugins",
-  "description": "Matan Castel's private Claude Code plugins",
+  "description": "Matan Castel's Claude Code plugins",
   "owner": { "name": "Matan Castel" },
   "plugins": [
     {
